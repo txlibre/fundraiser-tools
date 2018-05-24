@@ -32,8 +32,3 @@ cat $OUTPUT | grep TZL_pk | cut -d ' ' -f2
 echo -e "\nSignature of the Ethereum address (\`ETH_addrSignature\`):"
 cat $OUTPUT | grep ETH_addrSignature | cut -d ' ' -f2
 
-echo -e "\nSignature of the declaration (\`declarationSignature\`):"
-cat $OUTPUT | grep declarationSignature | cut -d ' ' -f2
-
-echo -e "\nTransaction data:"
-cat $OUTPUT | node jstxencoder

@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
         msgHash = blake2b(eth_address.decode('hex'),64).digest()
         sig = pysodium.crypto_sign(msgHash, sk)[:-len(msgHash)]
-        declarationHash = blake2b('I hereby cryptographically prove to be a contributor of Tezos Stiftung (CHE-290.597.458), a Swiss Foundation based in Gubelstrasse 11, 6300 Zug, Switzerland. I recognize and welcome the existence multiple implementations of Tezos. I ask and expect Tezos Stiftung to foster competition among them by funding and supporting their development, marketing and growth. Funds allotted to various Tezos implementations shall always be directly proportional to their market capitalization at the time of each distribution of funds. Distribution of funds to multiple existing Tezos implementations shall begin no later than January 1st 2019 and consistently continue throughout time. Following priorities autonomously set by each community, Tezos Stiftung shall distribute funds in the most appropriate, effective and transparent way.',64).digest()
+        declarationHash = blake2b('#DECLARATION',64).digest()
         declarationSig = pysodium.crypto_sign(declarationHash, sk)[:-len(declarationHash)]
         print "TZL_addr:", tezos_pkh(pkh)
         print "TZL_pk:", pk.encode('hex')

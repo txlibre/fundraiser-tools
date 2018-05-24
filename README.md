@@ -1,13 +1,13 @@
 # Command-line tools 
 
-This repository contains **Command-line tools** to ease  [whitelisting](https://tzlibre.github.io/whitelist.html) for the [TzLibre](https://tzlibre.github.io) split.
+This repository contains **Command-line tools** for optional arguments of [TzLibre split](https://tzlibre.github.io/split.html).
 
 These tools are based on a fork of DLS [`fundraiser-tools`](https://github.com/tezos/fundraiser-tools).
 
 The **Command-line tools** support you in:
 
-1. generating two digital signatures (namely `ETH_addrSignature` and `declarationSignature`) to prove  ownership of a Tezos private key and therefore the right to receive TZL coins;
-2. serializing both signatures in a single `tx-data` field to be broadcast into an Ethereum transaction according to the instructions provided on the [TzLibre website](https://tzlibre.github.io/whitelist.html#send-tx).
+1. recreate your tezos public key (namely `TZL_pk`) in order to be able to verify digital signatures
+1. generating the digital signature of an ethereum address (namely `ETH_addrSignature`) to prove ownership of a Tezos private key and therefore the right to receive TZL coins
 
 To improve usability and security a sandboxed execution environment is provided as a Docker container, along with an invocation bash script.
 
@@ -17,31 +17,22 @@ As a standard security practice when handling sensitive data you must:
 1. Read the whole source beforehand and be fully responsible for the code you run on your computer.
 2. Verify the computer you're using is secure and not compromised.
 
-## Table of Content
+## Table of Contents
 
-- [Declaration](#declaration): description and content of the declaration
-- [Repository content](#repository-content): description of the directories and files of the repository
-- [Signatures generation](#signatures-generation): instructions to generate your `ETH_addrSignature` and `declarationSignature`, and to serialize them inside a sandboxed environment.
+- [Repository](#repository): description of the directories and files of the repository
+- [Signatures generation](#signatures-generation): instructions to generate your `ETH_addrSignature`
 - [Tech details](#tech-details): technical details of the tools used in the sandboxed execution environment.
 
-## Declaration
-
-Whitelisting involves cryptografically signing a declaration to support decoupling the Tezos idea from its implementations. You must read, understand and agree with the declaration before signing it. Signatures are pseudonymous and not linked with your identity. You should not sign the declaration if you don't fully understand and agree with its content.
-
-> Declaration: `I hereby cryptographically prove to be a contributor of Tezos Stiftung (CHE-290.597.458), a Swiss Foundation based in Gubelstrasse 11, 6300 Zug, Switzerland. I recognize and welcome the existence multiple implementations of Tezos. I ask and expect Tezos Stiftung to foster competition among them by funding and supporting their development, marketing and growth. Funds allotted to various Tezos implementations shall always be directly proportional to their market capitalization at the time of each distribution of funds. Distribution of funds to multiple existing Tezos implementations shall begin no later than January 1st 2019 and consistently continue throughout time. Following priorities autonomously set by each community, Tezos Stiftung shall distribute funds in the most appropriate, effective and transparent way.`
-
-
-## Repository content
+## Repository
 
 This repository contains the following directories and files:
 
 - `Dockerfile`: instructions to create the Docker-based sandboxed execution environment. A Docker environment increases safety and stability, and allows the user to avoid installing dependencies or configuring an environment.
-- `gen-signatures.sh`: Bash script that improves usability and security by interactively asking the user for inputs while running the `pykeychecker` and `jstxencoder` tools. 
+- `gen-signatures.sh`: Bash script that improves usability and security by interactively asking the user for inputs while running the `pykeychecker` tool. 
 - `pykeychecker`: written in Python, this is an extended version (you can verify the [4 diffs](https://github.com/tezos/fundraiser-tools/compare/master...tzlibre:master?diff=split&name=master]#diff-e6c8e5e03826917a611ce5c5e23626fc)) of the broken DLS [`fundraiser-tools`](https://github.com/tezos/fundraiser-tools) which it also fixes. This is the only part of the code that interacts with private and sensible data. It then generates signatures for the declaration and for your Ethereum address. 
-- `jstxencoder`: Node.js tool to serialize public key and signatures as a `tx-data` hexadecimal field. It allows to pass the three parameters to an Ethereum smart contract.
 
 
-## Signatures generation
+## Signature generation
 
 ### Inputs
 This information is required:
@@ -57,9 +48,8 @@ This information is required:
 ### Outputs
 At the end of this process you'll get:
 
+- `TZL_pk`: your Tezos public key
 - `ETH_addrSignature`: signature of your Ethereum address.
-- `declarationSignature`: signature of the declaration (reported below).
-- `tx-data`: a serialization of the previous two signatures, ready to be used as *transaction data* in a standard Ethereum transaction.
 
 ### 1. Sandboxed execution environment generation
 To improve security, simplify environment configuration and avoid installing dependencies, you can build a Docker image starting from our `Dockerfile`. 
@@ -155,26 +145,9 @@ Tezos public key (`TZL_pk`):
 Signature of the Ethereum address (`ETH_addrSignature`):
 1a9871ca4357ef82ab8b427e428e1f430c78755f4d15b826d89bfc57e0309e3f468b5ea5b73921138f9a5e3d132a995c7bacd5a8a50800589e29232382e66c0d
 	  
-Signature of the declaration (`declarationSignature`):
-460323168a9b29629586ea888be344243a12003c381a9c427d2ebd94406f5e0376f1240c7d97b9acd686fa6003e10d72bdffc3f7ddeb3c7904d783a392ca490f
-	  
-Transaction data:
-0x1d997f8b012f1e1c8ed3eea205c75323c6db7f2a74b3273921c06a6629056331612d275e000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000000401a9871ca4357ef82ab8b427e428e1f430c78755f4d15b826d89bfc57e0309e3f468b5ea5b73921138f9a5e3d132a995c7bacd5a8a50800589e29232382e66c0d0000000000000000000000000000000000000000000000000000000000000040460323168a9b29629586ea888be344243a12003c381a9c427d2ebd94406f5e0376f1240c7d97b9acd686fa6003e10d72bdffc3f7ddeb3c7904d783a392ca490f
 ```
 
 > You should now verify that `Tezos address` provided in output is the same you find in your Tezos contribution PDF.
-
-> Finally, you should copy & paste the `Transaction data` provided in output, and then save it as a plain text file.
-
-### 3. Signatures verification (optional)
-
-To verify correctness of the produced signatures you can use the [`signatures-verification-tool`](https://github.io/tzlibre/signatures-verification-tool).
-
-### 4. Broadcast
-
-You've now generated your `Transaction data`. 
-
-You must now broadcast them by sending an Ethereum transaction following instructions on the [TzLibre website](https://tzlibre.github.io/whitelist.html#send-tx).
 
 - - -
 
@@ -220,32 +193,9 @@ cat keychecker_output.txt | grep TZL_addr
 
 If it does not match your Tezos address, please check input parameters again.
 
-You can verify that no private data is contained in this file.
-
-### `jstxencoder`
-
-`jstxencoder` serializes the output of  `pykeychecker` to allow invoking an Ethereum smart contract method by issuing a standard tx with data.
-
-#### Install system dependencies
-
-- Node.js: use [nvm](https://github.com/creationix/nvm) to install the latest stable release.
-- `make` and a proper C/C++ compiler toolchain (`sudo apt install build-essentials` on Ubuntu, Xcode on Mac OS X)
-
-#### Install package dependencies
-
-```sh
-cd jstxencoder; npm install; cd ..
-```
-
-#### Run
-
-```sh
-cat keychecker_output.txt | node jstxencoder 
-```
-
 ### `gen-signatures.sh`
 
-Instead of running `pykeychecker` and `jstxencoder` separately, we suggest to use the `gen-signature.sh` script to improve usability and security. 
+Instead of running directly `pykeychecker`, we suggest to use the `gen-signature.sh` script to improve usability and security. 
 
 To do so, issue the command and follow the provided instructions:
 
@@ -288,11 +238,6 @@ Tezos public key (`TZL_pk`):
 Signature of the Ethereum address (`ETH_addrSignature`):
 1a9871ca4357ef82ab8b427e428e1f430c78755f4d15b826d89bfc57e0309e3f468b5ea5b73921138f9a5e3d132a995c7bacd5a8a50800589e29232382e66c0d
 	  
-Signature of the declaration (`declarationSignature`):
-460323168a9b29629586ea888be344243a12003c381a9c427d2ebd94406f5e0376f1240c7d97b9acd686fa6003e10d72bdffc3f7ddeb3c7904d783a392ca490f
-	  
-Transaction data:
-0x1d997f8b012f1e1c8ed3eea205c75323c6db7f2a74b3273921c06a6629056331612d275e000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000000401a9871ca4357ef82ab8b427e428e1f430c78755f4d15b826d89bfc57e0309e3f468b5ea5b73921138f9a5e3d132a995c7bacd5a8a50800589e29232382e66c0d0000000000000000000000000000000000000000000000000000000000000040460323168a9b29629586ea888be344243a12003c381a9c427d2ebd94406f5e0376f1240c7d97b9acd686fa6003e10d72bdffc3f7ddeb3c7904d783a392ca490f
 ```
 
 We encourage you to read `gen-signature.sh` content to verify its behavior.
