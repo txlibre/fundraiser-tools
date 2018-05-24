@@ -1,12 +1,12 @@
 # Command-line tools 
 
-This repository contains **Command-line tools** for optional arguments of [TzLibre split](https://tzlibre.github.io/split.html).
+This repository contains **Command-line tools** for optional arguments of [TzLibre claim](https://tzlibre.github.io/split.html).
 
 These tools are based on a fork of DLS [`fundraiser-tools`](https://github.com/tezos/fundraiser-tools).
 
 The **Command-line tools** support you in:
 
-1. recreate your tezos public key (namely `TZL_pk`) in order to be able to verify digital signatures
+1. recreate your tezos public key (namely `TZL_pk`) in order to be able to verify digital signature
 1. generating the digital signature of an ethereum address (namely `ETH_addrSignature`) to prove ownership of a Tezos private key and therefore the right to receive TZL coins
 
 To improve usability and security a sandboxed execution environment is provided as a Docker container, along with an invocation bash script.
@@ -20,7 +20,7 @@ As a standard security practice when handling sensitive data you must:
 ## Table of Contents
 
 - [Repository](#repository): description of the directories and files of the repository
-- [Signatures generation](#signatures-generation): instructions to generate your `ETH_addrSignature`
+- [Signature generation](#signature-generation): instructions to generate your `ETH_addrSignature`
 - [Tech details](#tech-details): technical details of the tools used in the sandboxed execution environment.
 
 ## Repository
@@ -28,8 +28,8 @@ As a standard security practice when handling sensitive data you must:
 This repository contains the following directories and files:
 
 - `Dockerfile`: instructions to create the Docker-based sandboxed execution environment. A Docker environment increases safety and stability, and allows the user to avoid installing dependencies or configuring an environment.
-- `gen-signatures.sh`: Bash script that improves usability and security by interactively asking the user for inputs while running the `pykeychecker` tool. 
-- `pykeychecker`: written in Python, this is an extended version (you can verify the [4 diffs](https://github.com/tezos/fundraiser-tools/compare/master...tzlibre:master?diff=split&name=master]#diff-e6c8e5e03826917a611ce5c5e23626fc)) of the broken DLS [`fundraiser-tools`](https://github.com/tezos/fundraiser-tools) which it also fixes. This is the only part of the code that interacts with private and sensible data. It then generates signatures for the declaration and for your Ethereum address. 
+- `gen-signature.sh`: Bash script that improves usability and security by interactively asking the user for inputs while running the `pykeychecker` tool. 
+- `pykeychecker`: written in Python, this is an extended version (you can verify the [4 diffs](https://github.com/tezos/fundraiser-tools/compare/master...tzlibre:master?diff=split&name=master]#diff-e6c8e5e03826917a611ce5c5e23626fc)) of the broken DLS [`fundraiser-tools`](https://github.com/tezos/fundraiser-tools) which it also fixes. This is the only part of the code that interacts with private and sensible data. It then generates the signature for your Ethereum address. 
 
 
 ## Signature generation
@@ -42,8 +42,6 @@ This information is required:
 - email used when contributing to the Tezos ICO. You can find it in the PDF containing your contribution data.
 - password set during Tezos ICO.
 - an Ethereum address you want to whitelist.
-
-> You can whitelist an Ethereum address only once. The same Ethereum address can't be used to split multiple Tezos addresses. If you need to split several Tezos addresses you must to use a new Ethereum address each time. 
 
 ### Outputs
 At the end of this process you'll get:
@@ -96,13 +94,13 @@ Successfully built <some-hex-numbers>
 
 These messages confirm the environment has been successfully built.
 
-### 2. Run Docker container to produce signatures
+### 2. Run Docker container to produce the signature
 
-You have now built a Docker image that can use the `gen-signatures.sh` script. 
+You have now built a Docker image that can use the `gen-signature.sh` script. 
 
 > **THIS STEP WILL REQUIRE TO INPUT YOUR SENSITIVE INFORMATION. WE SUGGEST TO DISCONNECT FROM ALL NETWORKS BEFORE CONTINUING.**
 
-To generate signatures issue this command and follow on screen instructions:
+To generate the signature issue this command and follow on screen instructions:
 
 ```sh
 docker run -it --rm tzlibre/cl-tools
@@ -153,11 +151,11 @@ Signature of the Ethereum address (`ETH_addrSignature`):
 
 ## Tech details
 
-This section explains technical details of the tools used in the sandboxed environment. It'll help you understand what happens under the hood: although the sendboxed environment enhances usability and security (and we encourage you to use it), you might choose to separately run each tool to produce the required signatures.
+This section explains technical details of the tools used in the sandboxed environment. It'll help you understand what happens under the hood: although the sendboxed environment enhances usability and security (and we encourage you to use it), you might choose to separately run each tool to produce the required signature.
 
 ### `pykeychecker`
 
-The `pykeychecker` is a fork of DLS [`fundraiser-tools`](https://github.com/tezos/fundraiser-tools) which fixes a broken dependency in the DLS repo. It also upgrades it to sign your Ethereum address and the declaration reported above. You can check the [code diff](https://github.com/tezos/fundraiser-tools/compare/master...tzlibre:master?diff=split&name=master]#diff-e6c8e5e03826917a611ce5c5e23626fc)). Note that this is the only code that interacts with private and sensitive data.
+The `pykeychecker` is a fork of DLS [`fundraiser-tools`](https://github.com/tezos/fundraiser-tools) which fixes a broken dependency in the DLS repo. It also upgrades it to sign your Ethereum address and the declaration reported above. You can check the [code diff](https://github.com/tezos/fundraiser-tools/compare/master@%7B1day%7D...tzlibre:claim#diff-e6c8e5e03826917a611ce5c5e23626fc)). Note that this is the only code that interacts with private and sensitive data.
 
 #### Install system dependencies
 
@@ -193,14 +191,14 @@ cat keychecker_output.txt | grep TZL_addr
 
 If it does not match your Tezos address, please check input parameters again.
 
-### `gen-signatures.sh`
+### `gen-signature.sh`
 
 Instead of running directly `pykeychecker`, we suggest to use the `gen-signature.sh` script to improve usability and security. 
 
 To do so, issue the command and follow the provided instructions:
 
 ```sh
-bash gen-signatures.sh
+bash gen-signature.sh
 ```
 
 Here is an example:

@@ -32,3 +32,4 @@ cat $OUTPUT | grep TZL_pk | cut -d ' ' -f2
 echo -e "\nSignature of the Ethereum address (\`ETH_addrSignature\`):"
 cat $OUTPUT | grep ETH_addrSignature | cut -d ' ' -f2
 
+echo

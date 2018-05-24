@@ -48,12 +48,9 @@ if __name__ == '__main__':
 
         msgHash = blake2b(eth_address.decode('hex'),64).digest()
         sig = pysodium.crypto_sign(msgHash, sk)[:-len(msgHash)]
-        declarationHash = blake2b('#DECLARATION',64).digest()
-        declarationSig = pysodium.crypto_sign(declarationHash, sk)[:-len(declarationHash)]
         print "TZL_addr:", tezos_pkh(pkh)
         print "TZL_pk:", pk.encode('hex')
         print "ETH_addrSignature:", sig.encode('hex')
-        print "declarationSignature:", declarationSig.encode('hex')
 
     elif  len(sys.argv) == 2:
         tz_input = sys.argv[1]
